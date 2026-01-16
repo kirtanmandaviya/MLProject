@@ -1,25 +1,8 @@
-FROM python:3.10-slim
-
-# Prevent Python from writing .pyc files
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
+FROM python:3.8-slim
 WORKDIR /app
+COPY . /app 
 
-# Install system dependencies (important for ML libs)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update -y && apt install awscli -y
 
-# Copy only requirements first (better caching)
-COPY requirements.txt .
-
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
-# Copy rest of the application
-COPY . .
-
-CMD ["python", "app.py"]
+RUN pip install -r requirements.txt
+CMD [ "python3", "app.py" ]
